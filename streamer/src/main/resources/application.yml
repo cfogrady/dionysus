@@ -1,0 +1,5 @@
+mongo:
+  hosts:
+    - localhost:27017
+  dbName: dionysus
+
