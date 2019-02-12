@@ -3,7 +3,7 @@ Simple Java-Mongo-React Web App for serving up media content
 
 This project is made up of 3 major components.
 1) MongoDB
-2) Streamer - The java backend
+2) streamer - The java backend
 3) ui - The React frontend
 
 ## Requirements
