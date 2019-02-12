@@ -17,6 +17,7 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 @Singleton
+@EnableWebSecurity
 public class SecurityAdapter extends WebSecurityConfigurerAdapter {
     private static Logger logger = LoggerFactory.getLogger(SecurityAdapter.class);
 
@@ -42,7 +43,7 @@ public class SecurityAdapter extends WebSecurityConfigurerAdapter {
                 .anyRequest().authenticated()
                 .and()
                 .addFilter(new JWTAuthenticationFilter(authenticationManager(), objectMapper, securityConfig))
-                //.addFilter(new JWTAuthorizationFilter(authenticationManager()))
+                .addFilter(new JWTAuthorizationFilter(authenticationManager(), securityConfig))
                 // this disables session creation on Spring Security
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
     }

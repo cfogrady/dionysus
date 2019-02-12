@@ -13,14 +13,16 @@ import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 @Configuration
-@EnableWebSecurity
 @ConfigurationProperties(prefix="security")
 @Singleton
 public class SecurityConfig {
 
     private static final long DEFAULT_TIMEOUT = TimeUnit.MILLISECONDS.convert(4, TimeUnit.HOURS);
 
+    private static final String DEFAULT_HEADER = "jwt-authorization";
+
     private String secret;
+    private String header;
     private Long timeoutMs;
     private byte[] secretBytes;
 
@@ -30,6 +32,14 @@ public class SecurityConfig {
 
     public String getSecret() {
         return secret;
+    }
+
+    public String getHeader() {
+        return header != null ? header : DEFAULT_HEADER;
+    }
+
+    public void setHeader(String header) {
+        this.header = header;
     }
 
     public long getTimeoutMs() {

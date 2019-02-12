@@ -5,11 +5,14 @@ import com.github.mongobee.changeset.ChangeSet;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.IndexOptions;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.bson.Document;
 import org.dionysus.streamer.user.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
+import java.util.Random;
 
 @ChangeLog(order = "001")
 public class ChangeSet01 {
@@ -32,9 +35,11 @@ public class ChangeSet01 {
 
     @ChangeSet(order = "003", id = "createDefaultUser", author = "cfogrady")
     public void createDefaultUser(MongoDatabase db) {
+        String password = RandomStringUtils.random(10, true, true);
+        logger.info("Default admin password generated as: \"{}\"", password);
         BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
         MongoCollection<Document> collection = db.getCollection(UserRepository.USER_COLLECTION);
-        Document credentials = new Document("username", "admin").append("password", bCryptPasswordEncoder.encode("tempPassword"));
+        Document credentials = new Document("username", "admin").append("password", bCryptPasswordEncoder.encode(password));
         collection.insertOne(new Document("credentials", credentials).append("_class", "User"));
     }
 }

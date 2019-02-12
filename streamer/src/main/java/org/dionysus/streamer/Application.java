@@ -7,8 +7,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
-import javax.inject.Named;
-import java.util.Random;
 
 @ComponentScan("org.dionysus.streamer")
 @SpringBootApplication(exclude = {MongoReactiveDataAutoConfiguration.class})

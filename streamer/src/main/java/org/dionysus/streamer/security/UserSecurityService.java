@@ -4,6 +4,7 @@ import org.dionysus.streamer.user.User;
 import org.dionysus.streamer.user.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -15,6 +16,7 @@ import javax.inject.Singleton;
 import java.util.Collections;
 
 @Singleton
+@Configuration
 public class UserSecurityService implements UserDetailsService {
     private static Logger logger = LoggerFactory.getLogger(UserSecurityService.class);
 
