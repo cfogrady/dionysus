@@ -36,8 +36,6 @@ public class UserController {
             if(error != null) {
                 future.completeExceptionally(error);
             } else {
-                //redact password
-                user.getCredentials().setPassword(null);
                 future.complete(user);
             }
         }).subscribe();
@@ -51,8 +49,6 @@ public class UserController {
             if(error != null) {
                 future.completeExceptionally(error);
             } else {
-                // redact passwords
-                users.forEach(user -> user.getCredentials().setPassword(null));
                 future.complete(users);
             }
         }).subscribe();
