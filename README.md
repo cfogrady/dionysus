@@ -10,7 +10,8 @@ This project is made up of 3 major components.
 In order to run this locally the following must already be present on the target machine.
 1) mongod
 2) JDK 1.8+
-3) npm
+3) Maven 3+
+4) npm
 
 ## Running locally
 The project has several scripts to help for running locally.
