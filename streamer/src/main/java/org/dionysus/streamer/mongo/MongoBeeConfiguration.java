@@ -7,9 +7,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import javax.inject.Inject;
-import javax.inject.Singleton;
 
-@Singleton
 @Configuration
 public class MongoBeeConfiguration {
 

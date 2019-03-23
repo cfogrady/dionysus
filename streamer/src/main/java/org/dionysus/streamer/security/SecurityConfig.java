@@ -1,20 +1,15 @@
 package org.dionysus.streamer.security;
 
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 
 import javax.annotation.Nullable;
-import javax.inject.Singleton;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 @Configuration
 @ConfigurationProperties(prefix="security")
-@Singleton
 public class SecurityConfig {
 
     private static final long DEFAULT_TIMEOUT = TimeUnit.MILLISECONDS.convert(4, TimeUnit.HOURS);

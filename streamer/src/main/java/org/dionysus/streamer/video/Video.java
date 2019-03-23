@@ -17,6 +17,8 @@ public class Video {
 
     private String parentId;
 
+    private String path;
+
     public String getId() {
         return id;
     }
@@ -49,6 +51,14 @@ public class Video {
         this.parentId = parentId;
     }
 
+    public String getPath() {
+        return path;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
+    }
+
     @Override
     public String toString() {
         return "Video{" +
@@ -56,6 +66,7 @@ public class Video {
                 ", name='" + name + '\'' +
                 ", rating=" + rating +
                 ", parentId='" + parentId + '\'' +
+                ", path='" + path + '\'' +
                 '}';
     }
 }

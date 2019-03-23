@@ -5,11 +5,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.mongodb.repository.config.EnableReactiveMongoRepositories;
 import org.springframework.util.StringUtils;
 
-import javax.inject.Singleton;
 import java.util.List;
 
 @ConfigurationProperties(prefix="mongo")
-@Singleton
 @Configuration
 @EnableReactiveMongoRepositories("org.dionysus.streamer")
 public class MongoConfig {

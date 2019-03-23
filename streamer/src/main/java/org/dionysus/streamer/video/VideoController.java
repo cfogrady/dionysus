@@ -1,45 +1,55 @@
 package org.dionysus.streamer.video;
 
-import org.dionysus.streamer.util.MultipartFileSender;
+import org.apache.catalina.connector.ClientAbortException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.inject.Inject;
-import javax.inject.Singleton;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.*;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.concurrent.CompletableFuture;
 
 @RestController
-@Singleton
 @RequestMapping("/video")
 public class VideoController {
     private static Logger logger = LoggerFactory.getLogger(VideoController.class);
 
     private final VideoRepository videoRepository;
+    private final RangeResourceRequestHandler requestHandler;
 
     @Inject
-    public VideoController(VideoRepository videoRepository) {
+    public VideoController(VideoRepository videoRepository,
+                           RangeResourceRequestHandler requestHandler) {
+        this.requestHandler = requestHandler;
         this.videoRepository = videoRepository;
     }
 
-    @GetMapping(path="/{id}", produces = "application/json")
-    public CompletableFuture<Void> getUser(@PathVariable String id,
-                                     HttpServletRequest request,
-                                     HttpServletResponse response) {
-        CompletableFuture<Void> future = new CompletableFuture<>();
-        this.videoRepository.findById(id).doOnSuccess(video -> {
-            logger.info("Call to video for {}", video);
-            Path path = Paths.get("/home/cfogrady/dev/dionysus/small.mp4");
-            MultipartFileSender.fromPath(path).with(request).with(response).serveResource();
-            future.complete(null);
-        }).subscribe();
-        return future;
+    @GetMapping(path="/{id}")
+    //@Async(AsyncConfig.ASYNC_EXECUTOR)
+    // I don't know how to make the async :(
+    public void getVideo(@PathVariable String id,
+                         HttpServletRequest request,
+                         HttpServletResponse response) {
+        Video video = this.videoRepository.findById(id).block();
+        logger.info("Call to video for {}", video);
+        if(video == null) {
+            //logger.info("User requested video {} that doesn't exist", id);
+            //response.sendError(HttpStatus.NOT_FOUND.value(), "Video not found");
+        }
+        Path videoPath = video == null ? Paths.get("/home/cfogrady/Hook.mp4") : Paths.get(video.getPath());
+        try {
+            request.setAttribute(RangeResourceRequestHandler.FILE_ATTRIBUTE, videoPath.toFile());
+            this.requestHandler.handleRequest(request, response);
+        } catch (ServletException se) {
+            throw new IllegalStateException(se);
+        } catch (ClientAbortException cae){
+            logger.debug("Client Aborted. You can never rely on anything anymore", cae);
+        } catch (IOException ioe) {
+            throw new UncheckedIOException(ioe);
+        }
     }
 }

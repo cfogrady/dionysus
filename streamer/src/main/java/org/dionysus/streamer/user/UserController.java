@@ -7,13 +7,11 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.inject.Inject;
-import javax.inject.Singleton;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 @RestController
-@Singleton
 @RequestMapping("/user")
 public class UserController {
 
@@ -36,7 +34,11 @@ public class UserController {
             if(error != null) {
                 future.completeExceptionally(error);
             } else {
-                future.complete(user);
+                if(user == null) {
+                    //TODO: Bad Request or Not Found
+                } else {
+                    future.complete(user);
+                }
             }
         }).subscribe();
         return future;

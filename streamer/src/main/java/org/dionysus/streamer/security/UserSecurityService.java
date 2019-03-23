@@ -2,23 +2,16 @@ package org.dionysus.streamer.security;
 
 import org.dionysus.streamer.user.User;
 import org.dionysus.streamer.user.UserRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.web.client.HttpClientErrorException;
 
 import javax.inject.Inject;
-import javax.inject.Singleton;
+import javax.inject.Named;
 import java.util.Collections;
 
-@Singleton
-@Configuration
+@Named
 public class UserSecurityService implements UserDetailsService {
-    private static Logger logger = LoggerFactory.getLogger(UserSecurityService.class);
 
     private final UserRepository userRepository;
 
