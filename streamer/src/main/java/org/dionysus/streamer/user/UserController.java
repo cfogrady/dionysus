@@ -9,15 +9,14 @@ import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.UncheckedIOException;
-import java.util.List;
 import java.util.concurrent.CompletableFuture;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/user")
@@ -42,8 +41,7 @@ public class UserController {
     private static Logger logger = LoggerFactory.getLogger(UserController.class);
 
     @GetMapping(path="/refreshToken")
-    public void refreshToken(HttpServletRequest request,
-                             HttpServletResponse response,
+    public void refreshToken(HttpServletResponse response,
                              Authentication authentication) {
         String userName = (String) authentication.getPrincipal();
         String newToken = jwtBuilder.buildJWT(userName);
@@ -58,45 +56,18 @@ public class UserController {
     }
 
     @GetMapping(path="/{id}", produces = "application/json")
-    public CompletableFuture<User> getUser(@PathVariable String id) {
-        CompletableFuture<User> future = new CompletableFuture<>();
-        this.userRepository.findById(id).doOnSuccessOrError((user, error) -> {
-            if(error != null) {
-                future.completeExceptionally(error);
-            } else {
-                if(user == null) {
-                    //TODO: Bad Request or Not Found
-                } else {
-                    future.complete(user);
-                }
-            }
-        }).subscribe();
-        return future;
+    public Mono<User> getUser(@PathVariable String id) {
+        return this.userRepository.findById(id);
     }
 
     @GetMapping(path="/all", produces = "application/json")
-    public CompletableFuture<List<User>> getUsers() {
-        CompletableFuture<List<User>> future = new CompletableFuture<>();
-        this.userRepository.findAll().collect(Collectors.toList()).doOnSuccessOrError((users, error) -> {
-            if(error != null) {
-                future.completeExceptionally(error);
-            } else {
-                future.complete(users);
-            }
-        }).subscribe();
-        return future;
+    public Flux<User> getUsers() {
+        return this.userRepository.findAll();
     }
 
     @PostMapping(produces = "application/json", consumes = {MediaType.APPLICATION_JSON_VALUE})
-    public CompletableFuture<User> postUser(@RequestBody User user) {
+    public Mono<User> postUser(@RequestBody User user) {
         CompletableFuture<User> future = new CompletableFuture<>();
-        this.userRepository.insert(user).doOnSuccessOrError((userResult, error) -> {
-            if(error != null) {
-                future.completeExceptionally(error);
-            } else {
-                future.complete(userResult);
-            }
-        }).subscribe();
-        return future;
+        return this.userRepository.insert(user);
     }
 }
