@@ -1,5 +1,6 @@
 package org.dionysus.streamer.video;
 
+import org.dionysus.streamer.video.model.Video;
 import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
 import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Flux;

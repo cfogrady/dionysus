@@ -1,6 +1,9 @@
 package org.dionysus.streamer.video;
 
 import org.apache.catalina.connector.ClientAbortException;
+import org.dionysus.streamer.video.model.Video;
+import org.dionysus.streamer.video.model.VideoScanRequest;
+import org.dionysus.streamer.video.model.VideoScanResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -51,6 +54,12 @@ public class VideoController {
         this.videoRepository.insert(video).subscribe(insertedVideo -> {
             response.complete(insertedVideo.getId());
         });
+        return response;
+    }
+
+    @PostMapping(path="/scan")
+    public CompletableFuture<VideoScanResponse> scanForVideos(@RequestBody VideoScanRequest videoScanRequest) {
+        CompletableFuture<VideoScanResponse> response = new CompletableFuture<>();
         return response;
     }
 

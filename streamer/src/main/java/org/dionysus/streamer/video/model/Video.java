@@ -1,11 +1,12 @@
-package org.dionysus.streamer.video;
+package org.dionysus.streamer.video.model;
 
 
+import org.dionysus.streamer.video.VideoRepository;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.TypeAlias;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-@Document(collection=VideoRepository.VIDEO_COLLECTION)
+@Document(collection= VideoRepository.VIDEO_COLLECTION)
 @TypeAlias("Video")
 public class Video {
     @Id
