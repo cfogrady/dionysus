@@ -25,12 +25,9 @@ public class VideoController {
     private static Logger logger = LoggerFactory.getLogger(VideoController.class);
 
     private final VideoRepository videoRepository;
-    private final RangeResourceRequestHandler requestHandler;
 
     @Inject
-    public VideoController(VideoRepository videoRepository,
-                           RangeResourceRequestHandler requestHandler) {
-        this.requestHandler = requestHandler;
+    public VideoController(VideoRepository videoRepository) {
         this.videoRepository = videoRepository;
     }
 
