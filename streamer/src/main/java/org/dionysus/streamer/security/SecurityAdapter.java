@@ -22,16 +22,19 @@ public class SecurityAdapter extends WebSecurityConfigurerAdapter {
     private final UserSecurityService userSecurityService;
     private final ObjectMapper objectMapper;
     private final SecurityConfig securityConfig;
+    private final JWTBuilder jwtBuilder;
 
     @Inject
     public SecurityAdapter(UserSecurityService userSecurityService,
                            BCryptPasswordEncoder bCryptPasswordEncoder,
                            ObjectMapper objectMapper,
-                           SecurityConfig securityConfig) {
+                           SecurityConfig securityConfig,
+                           JWTBuilder jwtBuilder) {
         this.userSecurityService = userSecurityService;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.objectMapper = objectMapper;
         this.securityConfig = securityConfig;
+        this.jwtBuilder = jwtBuilder;
     }
 
     @Override
@@ -39,7 +42,7 @@ public class SecurityAdapter extends WebSecurityConfigurerAdapter {
         http.cors().and().csrf().disable().authorizeRequests()
                 .anyRequest().authenticated()
                 .and()
-                .addFilter(new JWTAuthenticationFilter(authenticationManager(), objectMapper, securityConfig))
+                .addFilter(new JWTAuthenticationFilter(authenticationManager(), objectMapper, securityConfig, jwtBuilder))
                 .addFilter(new JWTAuthorizationFilter(authenticationManager(), securityConfig))
                 // this disables session creation on Spring Security
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);

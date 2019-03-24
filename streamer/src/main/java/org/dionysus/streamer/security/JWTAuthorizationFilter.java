@@ -33,9 +33,10 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
     protected void doFilterInternal(HttpServletRequest req,
                                     HttpServletResponse res,
                                     FilterChain chain) throws IOException, ServletException {
-        String parameter = req.getParameter(securityConfig.getHeader());
         String header = req.getHeader(securityConfig.getHeader());
-        String token = StringUtils.isBlank(header) ? parameter : header;
+        boolean tokenInHeader = !StringUtils.isBlank(header);
+        //if the token isn't in the header try to get it of the query params
+        String token = tokenInHeader ? header : req.getParameter(securityConfig.getHeader());
         if(!StringUtils.isBlank(token)) {
             UsernamePasswordAuthenticationToken authentication = getAuthentication(token);
             SecurityContextHolder.getContext().setAuthentication(authentication);
