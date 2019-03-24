@@ -28,9 +28,9 @@ public class VideoController {
         this.videoRepository = videoRepository;
     }
 
-    @GetMapping(path="/{id}")
+    @GetMapping(path="/stream/{id}")
     //@Async(AsyncConfig.ASYNC_EXECUTOR)
-    // I don't know how to make the async :(
+    // I don't know how to make this async :(
     public void getVideo(@PathVariable String id,
                          HttpServletRequest request,
                          HttpServletResponse response) {

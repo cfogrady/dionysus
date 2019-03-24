@@ -58,7 +58,7 @@ public class UserController {
     }
 
     @PostMapping(produces = "application/json", consumes = {MediaType.APPLICATION_JSON_VALUE})
-    public CompletableFuture<User> putUser(@RequestBody User user) {
+    public CompletableFuture<User> postUser(@RequestBody User user) {
         CompletableFuture<User> future = new CompletableFuture<>();
         this.userRepository.insert(user).doOnSuccessOrError((userResult, error) -> {
             if(error != null) {
