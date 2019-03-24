@@ -3,6 +3,7 @@ package org.dionysus.streamer.video;
 import org.apache.catalina.connector.ClientAbortException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import javax.inject.Inject;
@@ -12,6 +13,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 @RestController
 @RequestMapping("/video")
@@ -28,6 +31,29 @@ public class VideoController {
         this.videoRepository = videoRepository;
     }
 
+    @GetMapping(path="/group/{id}")
+    public CompletableFuture<List<Video>> getVideoGroup(@PathVariable String id) {
+        CompletableFuture<List<Video>> response = new CompletableFuture<>();
+        this.videoRepository.findByParentId(id).collectList().subscribe(videoList -> {
+            response.complete(videoList);
+        });
+        return response;
+    }
+
+    @GetMapping(path="/group")
+    public CompletableFuture<List<Video>> getRootVideoGroup() {
+        return getVideoGroup(null);
+    }
+
+    @PostMapping
+    public CompletableFuture<String> postVideoMetadata(@RequestBody Video video) {
+        CompletableFuture<String> response = new CompletableFuture<>();
+        this.videoRepository.insert(video).subscribe(insertedVideo -> {
+            response.complete(insertedVideo.getId());
+        });
+        return response;
+    }
+
     @GetMapping(path="/stream/{id}")
     //@Async(AsyncConfig.ASYNC_EXECUTOR)
     // I don't know how to make this async :(
@@ -36,12 +62,12 @@ public class VideoController {
                          HttpServletResponse response) {
         Video video = this.videoRepository.findById(id).block();
         logger.info("Call to video for {}", video);
-        if(video == null) {
-            //logger.info("User requested video {} that doesn't exist", id);
-            //response.sendError(HttpStatus.NOT_FOUND.value(), "Video not found");
-        }
-        Path videoPath = video == null ? Paths.get("/home/cfogrady/Hook.mp4") : Paths.get(video.getPath());
         try {
+            if(video == null) {
+                logger.info("User requested video {} that doesn't exist", id);
+                response.sendError(HttpStatus.NOT_FOUND.value(), "Video not found");
+            }
+            Path videoPath = Paths.get(video.getPath());
             request.setAttribute(RangeResourceRequestHandler.FILE_ATTRIBUTE, videoPath.toFile());
             this.requestHandler.handleRequest(request, response);
         } catch (ServletException se) {
