@@ -6,13 +6,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import javax.inject.Inject;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.io.UncheckedIOException;
 
 @RestController
 @RequestMapping("/user")
@@ -32,23 +31,20 @@ public class UserController {
     }
 
     @GetMapping(path="/refreshToken")
-    public void refreshToken(HttpServletResponse response,
+    public Mono<Void> refreshToken(ServerWebExchange exchange,
                              Authentication authentication) {
         String userName = (String) authentication.getPrincipal();
         String newToken = jwtBuilder.buildJWT(userName);
-        response.addHeader(securityConfig.getHeader(), newToken);
-        response.setContentLength(0);
-        response.setStatus(HttpStatus.OK.value());
-        try {
-            response.flushBuffer();
-        } catch (IOException ioe) {
-            throw new UncheckedIOException(ioe);
-        }
+        exchange.getResponse().getHeaders().add(securityConfig.getHeader(), newToken);
+        exchange.getResponse().setStatusCode(HttpStatus.OK);
+        return exchange.getResponse().setComplete();
     }
 
     @GetMapping(path="/{id}", produces = "application/json")
     public Mono<User> getUser(@PathVariable String id) {
-        return this.userRepository.findById(id);
+        return this.userRepository.findById(id)
+                .switchIfEmpty(Mono.error(() ->
+                        new ResponseStatusException(HttpStatus.NOT_FOUND, "No User exists with id " + id)));
     }
 
     @GetMapping(path="/all", produces = "application/json")
