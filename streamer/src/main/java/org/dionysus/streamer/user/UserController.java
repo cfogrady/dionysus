@@ -2,6 +2,7 @@ package org.dionysus.streamer.user;
 
 import org.dionysus.streamer.security.JWTBuilder;
 import org.dionysus.streamer.security.SecurityConfig;
+import org.dionysus.streamer.user.model.User;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;

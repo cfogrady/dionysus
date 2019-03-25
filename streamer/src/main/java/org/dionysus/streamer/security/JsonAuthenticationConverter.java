@@ -3,7 +3,7 @@ package org.dionysus.streamer.security;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.dionysus.streamer.user.UserCredentials;
+import org.dionysus.streamer.user.model.UserCredentials;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.server.authentication.ServerAuthenticationConverter;

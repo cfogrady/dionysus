@@ -38,14 +38,12 @@ public class SecuritySpringConfig {
             ServerHttpSecurity http,
             @Named(JSON_AUTH_FILTER) AuthenticationWebFilter jsonAuthenticationFilter,
             JWTAuthenticationWebFilter jwtAuthenticationWebFilter) {
-        return http.cors().and().csrf().disable().authorizeExchange()
+        return http.cors().and().csrf().disable().logout().disable().authorizeExchange()
                 .anyExchange().authenticated()
                 .and()
                 .addFilterAt(jsonAuthenticationFilter, SecurityWebFiltersOrder.AUTHENTICATION)
                 .addFilterAt(jwtAuthenticationWebFilter, SecurityWebFiltersOrder.AUTHENTICATION)
                 .build();
-        // this disables session creation on Spring Security
-        //.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).build();
     }
 
     @Bean

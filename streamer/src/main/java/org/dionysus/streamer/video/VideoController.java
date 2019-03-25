@@ -46,6 +46,16 @@ public class VideoController {
         return this.videoRepository.insert(video).map(Video::getId);
     }
 
+    @PutMapping
+    public Mono<Video> setVideoMetadata(@RequestBody Video video) {
+        return this.videoRepository.save(video);
+    }
+
+    @GetMapping(path="/{id}")
+    public Mono<Video> getVideoMetadata(@PathVariable String id) {
+        return this.videoRepository.findById(id);
+    }
+
     @PostMapping(path="/scan")
     public Mono<VideoScanResponse> scanForVideos(@RequestBody VideoScanRequest videoScanRequest) {
         return null;
@@ -53,11 +63,10 @@ public class VideoController {
 
     @GetMapping(path="/stream/{id}", produces="video/mp4")
     public Mono<ResponseEntity<Resource>> getVideo(@PathVariable String id) {
-        return this.videoRepository.findById(id).map(video -> {
-            if(video == null) {
-                logger.info("User requested video {} that doesn't exist", id);
-                throw new ResponseStatusException(HttpStatus.NOT_FOUND,  "Video not found for id");
-            }
+        return this.videoRepository.findById(id).switchIfEmpty(Mono.error(() -> {
+            logger.info("User requested video {} that doesn't exist", id);
+            return new ResponseStatusException(HttpStatus.NOT_FOUND,  "Video not found for id " + id);
+        })).map(video -> {
             Path videoPath = Paths.get(video.getPath());
             HttpHeaders headers = new HttpHeaders();
             headers.add(HttpHeaders.CONTENT_TYPE, "video/mp4");
