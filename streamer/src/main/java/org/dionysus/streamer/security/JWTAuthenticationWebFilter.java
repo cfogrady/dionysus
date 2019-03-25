@@ -2,14 +2,18 @@ package org.dionysus.streamer.security;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.auth0.jwt.exceptions.TokenExpiredException;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.ReactiveSecurityContextHolder;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextImpl;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.server.WebFilter;
 import org.springframework.web.server.WebFilterChain;
@@ -49,7 +53,6 @@ public class JWTAuthenticationWebFilter implements WebFilter {
     }
 
     private Authentication getJWTAuthentication(ServerWebExchange serverWebExchange) {
-        logger.info("jwt auth");
         String header = serverWebExchange.getRequest().getHeaders().getFirst(securityConfig.getHeader());
         boolean tokenInHeader = !StringUtils.isBlank(header);
         //if the token isn't in the header try to get it of the query params
@@ -57,7 +60,7 @@ public class JWTAuthenticationWebFilter implements WebFilter {
         if(!StringUtils.isBlank(token)) {
             return getAuthentication(token);
         }
-        return null;
+        throw new JWTVerificationException("Token is absent");
     }
 
     private UsernamePasswordAuthenticationToken getAuthentication(String header) {
@@ -65,9 +68,9 @@ public class JWTAuthenticationWebFilter implements WebFilter {
                 .build()
                 .verify(header)
                 .getSubject();
-        if(username != null) {
+        if (username != null) {
             return new UsernamePasswordAuthenticationToken(username, null, Collections.emptyList());
         }
-        return null;
+        throw new JWTVerificationException("Username is absent from token");
     }
 }

@@ -72,7 +72,6 @@ public class SecuritySpringConfig {
                 ServerWebExchangeMatchers.pathMatchers(HttpMethod.POST, "/login")
         );
         filter.setAuthenticationSuccessHandler((filterExchange, authentication) -> {
-            logger.info("json auth success");
             filterExchange.getExchange().getResponse().getHeaders().add(securityConfig.getHeader(), jwtBuilder.buildJWT(authentication.getName()));
             filterExchange.getExchange().getResponse().setStatusCode(HttpStatus.OK);
             filterExchange.getExchange().getResponse().setComplete();
