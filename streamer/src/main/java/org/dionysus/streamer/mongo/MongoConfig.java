@@ -2,14 +2,12 @@ package org.dionysus.streamer.mongo;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.mongodb.repository.config.EnableReactiveMongoRepositories;
 import org.springframework.util.StringUtils;
 
 import java.util.List;
 
 @ConfigurationProperties(prefix="mongo")
 @Configuration
-@EnableReactiveMongoRepositories("org.dionysus.streamer")
 public class MongoConfig {
 
     private List<String> hosts;

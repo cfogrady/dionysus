@@ -1,6 +1,7 @@
-package org.dionysus.streamer.user;
+package org.dionysus.streamer.user.model;
 
 
+import org.dionysus.streamer.user.UserRepository;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.TypeAlias;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -9,7 +10,7 @@ import javax.annotation.Nonnull;
 import javax.validation.constraints.NotNull;
 import java.util.Objects;
 
-@Document(collection=UserRepository.USER_COLLECTION)
+@Document(collection= UserRepository.USER_COLLECTION)
 @TypeAlias("User")
 public class User {
     @Id
