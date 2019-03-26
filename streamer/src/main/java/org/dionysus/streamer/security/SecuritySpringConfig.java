@@ -92,6 +92,7 @@ public class SecuritySpringConfig {
         CorsConfiguration corsConfiguration = new CorsConfiguration();
         corsConfiguration.setAllowedOrigins(securityConfig.getAllowedOrigins());
         corsConfiguration.addExposedHeader(securityConfig.getHeader());
+        corsConfiguration.addAllowedHeader(securityConfig.getHeader());
         corsConfiguration.addAllowedHeader(HttpHeaders.CONTENT_TYPE);
         corsConfiguration.setMaxAge(-1L);
         corsConfiguration.setAllowedMethods(Lists.newArrayList("PUT", "POST", "DELETE", "PATCH", "GET", "OPTIONS"));
