@@ -1,9 +1,11 @@
 package org.dionysus.streamer.security;
 
+import com.google.common.collect.Lists;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.ReactiveAuthenticationManager;
@@ -15,6 +17,11 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.security.web.server.authentication.AuthenticationWebFilter;
 import org.springframework.security.web.server.util.matcher.ServerWebExchangeMatchers;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.reactive.CorsConfigurationSource;
+import org.springframework.web.cors.reactive.CorsWebFilter;
+import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
+import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 import javax.inject.Inject;
@@ -39,6 +46,7 @@ public class SecuritySpringConfig {
             @Named(JSON_AUTH_FILTER) AuthenticationWebFilter jsonAuthenticationFilter,
             JWTAuthenticationWebFilter jwtAuthenticationWebFilter) {
         return http.cors().and().csrf().disable().logout().disable().authorizeExchange()
+                .pathMatchers(HttpMethod.OPTIONS, "/login").permitAll()
                 .anyExchange().authenticated()
                 .and()
                 .addFilterAt(jsonAuthenticationFilter, SecurityWebFiltersOrder.AUTHENTICATION)
@@ -78,4 +86,18 @@ public class SecuritySpringConfig {
         return filter;
     }
 
+    @Bean
+    @Inject
+    public CorsConfigurationSource buildCorsConfigurationSource(SecurityConfig securityConfig) {
+        CorsConfiguration corsConfiguration = new CorsConfiguration();
+        corsConfiguration.setAllowedOrigins(securityConfig.getAllowedOrigins());
+        corsConfiguration.addAllowedHeader(securityConfig.getHeader());
+        corsConfiguration.addAllowedHeader(HttpHeaders.CONTENT_TYPE);
+        corsConfiguration.setMaxAge(-1L);
+        corsConfiguration.setAllowedMethods(Lists.newArrayList("PUT", "POST", "DELETE", "PATCH", "GET", "OPTIONS"));
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", corsConfiguration);
+        return source;
+    }
 }

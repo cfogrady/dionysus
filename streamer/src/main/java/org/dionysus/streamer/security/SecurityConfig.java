@@ -1,10 +1,12 @@
 package org.dionysus.streamer.security;
 
+import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
 import javax.annotation.Nullable;
+import java.util.List;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
@@ -16,10 +18,13 @@ public class SecurityConfig {
 
     private static final String DEFAULT_HEADER = "jwt-authorization";
 
+    private static final String DEFAULT_ORIGIN = "http://localhost:3000";
+
     private String secret;
     private String header;
     private Long timeoutMs;
     private byte[] secretBytes;
+    private List<String> allowedOrigins;
 
     public void setSecret(@Nullable String secret) {
         this.secret = secret;
@@ -43,6 +48,14 @@ public class SecurityConfig {
 
     public void setTimeoutMs(Long timeoutMs) {
         this.timeoutMs = timeoutMs;
+    }
+
+    public List<String> getAllowedOrigins() {
+        return allowedOrigins != null ? allowedOrigins : Lists.newArrayList(DEFAULT_ORIGIN);
+    }
+
+    public void setAllowedOrigins(List<String> allowedOrigins) {
+        this.allowedOrigins = allowedOrigins;
     }
 
     public byte[] getSecretBytes() {
