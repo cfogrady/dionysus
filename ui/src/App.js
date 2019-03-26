@@ -1,28 +1,63 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
+import Login from './Login';
 import './App.css';
 
 class App extends Component {
-  render() {
-    return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </header>
-      </div>
-    );
-  }
+    constructor(props) {
+        super(props);
+        this.state = {
+            jwt: null,
+            loading: false,
+            badLogin: false,
+        };
+        this.login = this.login.bind(this);
+    }
+
+    login(username, password) {
+      fetch("http://localhost:8080/login", {
+        method: "POST",
+        mode: "cors",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          username,
+          password,
+        })
+      }).then(res => {
+        if(!res.ok) {
+          this.setState({
+            badLogin: true,
+            loading: false,
+          });
+        } else {
+          this.setState({
+            loading: false,
+            badLogin: false,
+            jwt: res.headers.get("jwt-authorization"), 
+          });
+        }
+      });
+      this.setState({
+        loading: true, 
+      });
+    }
+
+    render() {
+        const { jwt, loading, badLogin } = this.state; 
+        return (
+            <div className="App">
+                {jwt == null ?
+                <Login processingLogin={loading} login={this.login} badLogin={badLogin}/> : 
+                <header className="App-header">
+                    <p>
+                        Dionysus Video Streamer
+                    </p>
+                </header>
+                }
+            </div>
+        );
+    }
 }
 
 export default App;
