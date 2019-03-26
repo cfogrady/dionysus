@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import Login from './Login';
+import VideoContainer from './components/VideoContainer';
+import { POST, setJWT } from './helpers/API';
 import './App.css';
 
 class App extends Component {
@@ -14,23 +16,17 @@ class App extends Component {
     }
 
     login(username, password) {
-      fetch("http://localhost:8080/login", {
-        method: "POST",
-        mode: "cors",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          username,
-          password,
-        })
-      }).then(res => {
+      POST({path: "login", body: {
+        username,
+        password,
+      }}).then(res => {
         if(!res.ok) {
           this.setState({
             badLogin: true,
             loading: false,
           });
         } else {
+          setJWT(res.headers.get("jwt-authorization"));
           this.setState({
             loading: false,
             badLogin: false,
@@ -53,6 +49,7 @@ class App extends Component {
                     <p>
                         Dionysus Video Streamer
                     </p>
+                    <VideoContainer/>
                 </header>
                 }
             </div>

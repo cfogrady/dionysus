@@ -1,5 +1,7 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
+
+import LoadingModal from './components/modals/LoadingModal';
 import './Login.css';
 
 class Login extends PureComponent {
@@ -45,6 +47,7 @@ class Login extends PureComponent {
                     </div>
                     <button type="submit" disabled={processingLogin}>Login</button>
                     {badLogin && <div className="error-text">Invalid username or password</div>}
+                    <LoadingModal show={processingLogin}/>
                 </div>
             </form>
         );
