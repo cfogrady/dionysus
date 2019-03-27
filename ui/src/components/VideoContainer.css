@@ -1,0 +1,22 @@
+.video-container {
+    display: flux;
+    width: 100%;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    align-items: center;
+    align-content: flex-start;
+}
+
+.video {
+    width: 150px;
+    height: 100px;
+    background-color: crimson;
+    color: white;
+    margin: 1em;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}

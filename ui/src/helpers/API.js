@@ -15,6 +15,8 @@ export const GET = ({path}) => {
     });
 };
 
+export const fetchVideoSrc = id => `${config.apiURL}/video/stream/${id}?jwt-authorization=${JWT}`;
+
 export const POST = ({ path, body }) => {
     return fetch(`${config.apiURL}/${path}`, {
         method: "POST",

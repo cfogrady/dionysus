@@ -1,7 +1,8 @@
 import React, { PureComponent } from 'react';
-//import PropTypes from 'prop-types';
-import { GET } from '../helpers/API';
+import PropTypes from 'prop-types';
+import { GET, fetchVideoSrc } from '../helpers/API';
 import LoadingModal from './modals/LoadingModal';
+import SimpleModal from './modals/SimpleModal';
 import './VideoContainer.css';
 
 class VideoContainer extends PureComponent {
@@ -10,6 +11,7 @@ class VideoContainer extends PureComponent {
         this.state = {
             loading: true,
             videos: [],
+            videoSrc: null,
         };
         this.fetchVideos = this.fetchVideos.bind(this);
     }
@@ -31,7 +33,7 @@ class VideoContainer extends PureComponent {
         }).then(data => {
             this.setState({
                 loading: false,
-                videos: data,
+                videos: data || [],
             });
         });
         this.setState({
@@ -39,13 +41,31 @@ class VideoContainer extends PureComponent {
         });
     }
 
+    playElement(video) {
+        return _ => {
+            if(video.groupContainer) {
+                this.fetchVideos(video.id);
+            } else {
+                const videoSrc = fetchVideoSrc(video.id);
+                this.setState({
+                    videoSrc,
+                })
+            }
+        }
+    }
+
     render() {
-        const { videos, loading } = this.state;
+        const { videos, loading, videoSrc } = this.state;
         return (
             <div className='video-container'>
+                <SimpleModal show={videoSrc != null}>
+                    <video controls key={videoSrc}>
+                        <source src={videoSrc} type="video/mp4"/>
+                    </video>
+                </SimpleModal>
                 <LoadingModal show={loading}/>
                 {videos.map(video => 
-                    (<div key={video.id} className='video'>
+                    (<div key={video.id} onClick={this.playElement(video)} className='video'>
                         <p>{video.name}</p>
                     </div>)
                 )}
@@ -53,11 +73,12 @@ class VideoContainer extends PureComponent {
         );
     }
 
-    /*static propTypes = {
+    static propTypes = {
+        jwt: PropTypes.string.isRequired,
     };
 
     static defaultProps = {
-    };*/
+    };
 
 }
 
