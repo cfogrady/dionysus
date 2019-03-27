@@ -14,6 +14,7 @@ class VideoContainer extends PureComponent {
             videoSrc: null,
         };
         this.fetchVideos = this.fetchVideos.bind(this);
+        this.unloadVideo = this.unloadVideo.bind(this);
     }
 
     componentDidMount(props) {
@@ -54,14 +55,23 @@ class VideoContainer extends PureComponent {
         }
     }
 
+    unloadVideo() {
+        this.setState({
+            videoSrc: null,
+        });
+    }
+
     render() {
         const { videos, loading, videoSrc } = this.state;
         return (
             <div className='video-container'>
                 <SimpleModal show={videoSrc != null}>
-                    <video controls key={videoSrc}>
-                        <source src={videoSrc} type="video/mp4"/>
-                    </video>
+                    <div className="video-element-container">
+                        <video width="720" autoplay="autoplay" controls key={videoSrc}>
+                            <source src={videoSrc} type="video/mp4"/>
+                        </video>
+                        <button onClick={this.unloadVideo}>Back</button>
+                    </div>
                 </SimpleModal>
                 <LoadingModal show={loading}/>
                 {videos.map(video => 
