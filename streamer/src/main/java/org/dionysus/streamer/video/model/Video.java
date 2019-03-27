@@ -1,6 +1,8 @@
 package org.dionysus.streamer.video.model;
 
 
+import com.fasterxml.jackson.annotation.JsonGetter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.dionysus.streamer.video.VideoRepository;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.TypeAlias;
@@ -18,6 +20,7 @@ public class Video {
 
     private String parentId;
 
+    @JsonIgnore
     private String path;
 
     public String getId() {
@@ -52,12 +55,19 @@ public class Video {
         this.parentId = parentId;
     }
 
+    @JsonIgnore
     public String getPath() {
         return path;
     }
 
+    @JsonIgnore
     public void setPath(String path) {
         this.path = path;
+    }
+
+    @JsonGetter("groupContainer")
+    public boolean isGroupContainer() {
+        return path == null;
     }
 
     @Override
