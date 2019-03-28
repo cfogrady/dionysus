@@ -1,5 +1,7 @@
 package org.dionysus.streamer.video;
 
+import org.dionysus.streamer.exception.BadRequestException;
+import org.dionysus.streamer.exception.NotFoundException;
 import org.dionysus.streamer.video.model.Video;
 import org.dionysus.streamer.video.model.VideoScanRequest;
 import org.dionysus.streamer.video.model.VideoScanResponse;
@@ -12,7 +14,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -111,10 +112,10 @@ public class VideoController {
     public Mono<ResponseEntity<Resource>> getVideo(@PathVariable String id) {
         return this.videoRepository.findById(id).switchIfEmpty(Mono.error(() -> {
             logger.info("User requested video {} that doesn't exist", id);
-            return new ResponseStatusException(HttpStatus.NOT_FOUND,  "Video not found for id " + id);
+            return new NotFoundException("Video not found for id " + id);
         })).map(video -> {
             if(video.isGroupContainer()) {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Request stream for a group of videos. Streams must be for a single video");
+                throw new BadRequestException("Request stream for a group of videos. Streams must be for a single video");
             }
             HttpHeaders headers = new HttpHeaders();
             headers.add(HttpHeaders.CONTENT_TYPE, "video/mp4");

@@ -1,5 +1,6 @@
 package org.dionysus.streamer.user;
 
+import org.dionysus.streamer.exception.NotFoundException;
 import org.dionysus.streamer.security.JWTBuilder;
 import org.dionysus.streamer.security.SecurityConfig;
 import org.dionysus.streamer.user.model.User;
@@ -7,7 +8,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -45,7 +45,7 @@ public class UserController {
     public Mono<User> getUser(@PathVariable String id) {
         return this.userRepository.findById(id)
                 .switchIfEmpty(Mono.error(() ->
-                        new ResponseStatusException(HttpStatus.NOT_FOUND, "No User exists with id " + id)));
+                        new NotFoundException("No User exists with id " + id)));
     }
 
     @GetMapping(path="/all", produces = "application/json")
