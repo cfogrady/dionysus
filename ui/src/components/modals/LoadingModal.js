@@ -4,7 +4,7 @@ import { ClipLoader } from 'react-spinners';
 import './LoadingModal.css';
 
 const LoadingModal = ({ show }) => {
-    const showHideClassName = show ? "modal display-block" : "modal display-none";
+    const showHideClassName = show ? "loading-modal loading-flex" : "loading-modal loading-none";
     return (
         <div className={showHideClassName}>
             <ClipLoader

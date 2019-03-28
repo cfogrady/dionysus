@@ -1,4 +1,4 @@
-.modal {
+.loading-modal {
     position: fixed;
     top: 0;
     left: 0;
@@ -7,12 +7,12 @@
     background: rgba(0, 0, 0, 0.6);
   }
   
-  .display-block {
+  .loading-flex {
     display: flex;
     justify-content: center;
     align-items: center;
   }
   
-  .display-none {
+  .loading-none {
     display: none;
   }
