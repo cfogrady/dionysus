@@ -7,7 +7,6 @@ import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguratio
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.web.reactive.config.EnableWebFlux;
 
-
 @ComponentScan("org.dionysus.streamer")
 @SpringBootApplication(exclude = {MongoReactiveDataAutoConfiguration.class,
         WebMvcAutoConfiguration.class})

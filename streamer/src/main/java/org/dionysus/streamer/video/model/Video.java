@@ -3,7 +3,7 @@ package org.dionysus.streamer.video.model;
 
 import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.dionysus.streamer.video.VideoRepository;
+import org.dionysus.streamer.video.repository.VideoRepository;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.TypeAlias;
 import org.springframework.data.mongodb.core.mapping.Document;

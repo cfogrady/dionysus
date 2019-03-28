@@ -3,9 +3,10 @@ package org.dionysus.streamer.video;
 import org.dionysus.streamer.video.model.Video;
 import org.dionysus.streamer.video.model.VideoScanRequest;
 import org.dionysus.streamer.video.model.VideoScanResponse;
+import org.dionysus.streamer.video.repository.VideoRepository;
+import org.reactivestreams.Publisher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -16,8 +17,10 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import javax.inject.Inject;
+import java.io.File;
 import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/video")
@@ -25,10 +28,13 @@ public class VideoController {
     private static Logger logger = LoggerFactory.getLogger(VideoController.class);
 
     private final VideoRepository videoRepository;
+    private final FileSystemWrapper fileSystemWrapper;
 
     @Inject
-    public VideoController(VideoRepository videoRepository) {
+    public VideoController(VideoRepository videoRepository,
+                           FileSystemWrapper fileSystemWrapper) {
         this.videoRepository = videoRepository;
+        this.fileSystemWrapper = fileSystemWrapper;
     }
 
     @GetMapping(path="/group/{id}")
@@ -56,9 +62,49 @@ public class VideoController {
         return this.videoRepository.findById(id);
     }
 
+    /**
+     * Treats any files in the directory passed in as movies. Groups all files by their respective directory structure.
+     */
     @PostMapping(path="/scan")
     public Mono<VideoScanResponse> scanForVideos(@RequestBody VideoScanRequest videoScanRequest) {
-        return null;
+        Publisher<Video> publisher = scanForVideos(videoScanRequest.getRootPath());
+        return videoRepository.insert(publisher).reduce(0, (count, video) -> {
+            if(video.isGroupContainer()) {
+                return count;
+            }
+            return count+1;
+        }).map(VideoScanResponse::new);
+    }
+
+    private Flux<Video> scanForVideos(String pathStr) {
+        return Flux.create(fluxSink -> {
+            Path searchPath = this.fileSystemWrapper.getPath(pathStr).normalize();
+            Map<Path, String> parentsToIds = new HashMap<>();
+            Queue<Path> pathsToProcess = fileSystemWrapper.listDirectoryContents(searchPath).collect(Collectors.toCollection(LinkedList::new));
+            while(!pathsToProcess.isEmpty()) {
+                Path path = pathsToProcess.remove();
+                File file = path.toFile();
+                String name = file.getName();
+                String parent = parentsToIds.get(path.getParent());
+                Video video = new Video();
+                video.setId(videoRepository.generateId());
+                video.setParentId(parent);
+                if(file.isDirectory()) {
+                    parentsToIds.put(path, video.getId());
+                    pathsToProcess.addAll(fileSystemWrapper.listDirectoryContents(path).collect(Collectors.toList()));
+                } else {
+                    video.setPath(path.toString());
+                    if(name.contains(".mp4")) {
+                        name = name.split(".")[0];
+                    } else {
+                        continue;
+                    }
+                }
+                video.setName(name);
+                fluxSink.next(video);
+            }
+            fluxSink.complete();
+        });
     }
 
     @GetMapping(path="/stream/{id}", produces="video/mp4")
@@ -67,10 +113,12 @@ public class VideoController {
             logger.info("User requested video {} that doesn't exist", id);
             return new ResponseStatusException(HttpStatus.NOT_FOUND,  "Video not found for id " + id);
         })).map(video -> {
-            Path videoPath = Paths.get(video.getPath());
+            if(video.isGroupContainer()) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Request stream for a group of videos. Streams must be for a single video");
+            }
             HttpHeaders headers = new HttpHeaders();
             headers.add(HttpHeaders.CONTENT_TYPE, "video/mp4");
-            return new ResponseEntity<>(new FileSystemResource(videoPath), headers, HttpStatus.OK );
+            return new ResponseEntity<>(fileSystemWrapper.buildFileSystemResource(video.getPath()), headers, HttpStatus.OK );
         });
     }
 }
