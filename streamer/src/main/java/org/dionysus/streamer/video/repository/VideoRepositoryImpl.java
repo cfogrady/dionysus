@@ -4,8 +4,8 @@ import org.bson.types.ObjectId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class VideoRepositoryCustomizationImpl implements VideoRepositoryCusomization {
-    private static Logger logger = LoggerFactory.getLogger(VideoRepositoryCustomizationImpl.class);
+public class VideoRepositoryImpl implements VideoRepositoryCusomization {
+    private static Logger logger = LoggerFactory.getLogger(VideoRepositoryImpl.class);
 
     @Override
     public String generateId() {

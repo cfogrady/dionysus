@@ -18,7 +18,7 @@ public class SecurityConfig {
 
     private static final String DEFAULT_HEADER = "jwt-authorization";
 
-    private static final String DEFAULT_ORIGIN = "http://localhost:3000";
+    private static final String DEFAULT_ORIGIN = "*";
 
     private String secret;
     private String header;
