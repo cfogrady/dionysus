@@ -96,7 +96,7 @@ public class VideoController {
                 } else {
                     video.setPath(path.toString());
                     if(name.contains(".mp4")) {
-                        name = name.split(".")[0];
+                        name = name.replace(".mp4", "");
                     } else {
                         continue;
                     }

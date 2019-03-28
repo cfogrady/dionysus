@@ -18,7 +18,7 @@ public class User {
     @NotNull
     private UserCredentials credentials;
 
-    User(String id, @Nonnull UserCredentials credentials) {
+    public User(String id, @Nonnull UserCredentials credentials) {
         this.id = id;
         this.credentials = credentials;
     }

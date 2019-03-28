@@ -8,7 +8,6 @@ import org.slf4j.LoggerFactory;
 import javax.inject.Inject;
 import javax.inject.Named;
 import java.time.Duration;
-import java.time.Instant;
 import java.util.Date;
 
 @Named
@@ -16,10 +15,13 @@ public class JWTBuilder {
     private static Logger logger = LoggerFactory.getLogger(JWTBuilder.class);
 
     private final SecurityConfig securityConfig;
+    private final DateTimeProvider dateTimeProvider;
 
     @Inject
-    public JWTBuilder(SecurityConfig securityConfig) {
+    public JWTBuilder(SecurityConfig securityConfig,
+                      DateTimeProvider dateTimeProvider) {
         this.securityConfig = securityConfig;
+        this.dateTimeProvider = dateTimeProvider;
     }
 
     /**
@@ -28,7 +30,7 @@ public class JWTBuilder {
      * @return JWT in String form.
      */
     public String buildJWT(String username) {
-        Date expiry = Date.from(Instant.now().plus(Duration.ofMillis(securityConfig.getTimeoutMs())));
+        Date expiry = Date.from(dateTimeProvider.getNow().plus(Duration.ofMillis(securityConfig.getTimeoutMs())));
 
         return JWT.create().withSubject(username).withExpiresAt(expiry).sign(Algorithm.HMAC512(securityConfig.getSecretBytes()));
     }
