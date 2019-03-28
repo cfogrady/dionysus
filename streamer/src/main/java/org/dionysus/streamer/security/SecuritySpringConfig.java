@@ -19,9 +19,7 @@ import org.springframework.security.web.server.authentication.AuthenticationWebF
 import org.springframework.security.web.server.util.matcher.ServerWebExchangeMatchers;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.reactive.CorsConfigurationSource;
-import org.springframework.web.cors.reactive.CorsWebFilter;
 import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
-import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 import javax.inject.Inject;
@@ -33,6 +31,8 @@ public class SecuritySpringConfig {
     private static Logger logger = LoggerFactory.getLogger(SecuritySpringConfig.class);
 
     public static final String JSON_AUTH_FILTER = "jsonAuthFilter";
+
+    // TODO: Add unit tests... maybe?
 
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {

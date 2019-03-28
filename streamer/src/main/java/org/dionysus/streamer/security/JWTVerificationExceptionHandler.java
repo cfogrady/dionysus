@@ -31,6 +31,7 @@ public class JWTVerificationExceptionHandler implements WebExceptionHandler {
         this.objectMapper = objectMapper;
     }
 
+    // TODO: Add unit test
     @Override
     public Mono<Void> handle(ServerWebExchange serverWebExchange, Throwable throwable) {
         logger.debug("JWTVerificationException");

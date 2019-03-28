@@ -35,6 +35,7 @@ public class JWTAuthenticationWebFilter implements WebFilter {
         this.securityConfig = securityConfig;
     }
 
+    // TODO: Add unit test if possible (static method call)
     @Override
     public Mono<Void> filter(ServerWebExchange serverWebExchange, WebFilterChain webFilterChain) {
         return webFilterChain.filter(serverWebExchange)

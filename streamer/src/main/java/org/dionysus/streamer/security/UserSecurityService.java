@@ -21,6 +21,7 @@ public class UserSecurityService implements ReactiveUserDetailsService {
         this.userRepository = userRepository;
     }
 
+    // TODO: Add unit test
     @Override
     public Mono<UserDetails> findByUsername(String username) {
         return this.userRepository.findByCredentialsUsername(username).map(user -> {

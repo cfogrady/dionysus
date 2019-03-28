@@ -25,6 +25,7 @@ public class JsonAuthenticationConverter implements ServerAuthenticationConverte
         this.objectMapper = objectMapper;
     }
 
+    // TODO: Add unit test
     @Override
     public Mono<Authentication> convert(ServerWebExchange serverWebExchange) {
         return serverWebExchange.getRequest().getBody().next().map(body -> {
