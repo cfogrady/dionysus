@@ -102,7 +102,7 @@ class VideoContainer extends PureComponent {
                 <div className='video-container'>
                     <SimpleModal show={videoSrc != null}>
                         <div className="video-element-container">
-                            <video width="720" className='video-elem' autoplay="autoplay" controls key={videoSrc}>
+                            <video className='video-elem' autoplay="autoplay" controls key={videoSrc}>
                                 <source src={videoSrc} type="video/mp4"/>
                             </video>
                             <button onClick={this.unloadVideo}>Back</button>
