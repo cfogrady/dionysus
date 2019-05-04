@@ -1,15 +1,15 @@
 .video-page-container {
     display: flex;
     width: 100%;
-    flex-direction: column;
-    justify-content: flex-start;
+    flex-direction: row;
+    justify-content: center;
     align-items: flex-start;
     align-content: flex-start;
+    overflow-y: scroll;
 }
 
 .video-container {
     display: flex;
-    width: 100%;
     flex-direction: row;
     flex-wrap: wrap;
     justify-content: flex-start;
@@ -28,4 +28,12 @@
     align-items: center;
     justify-content: center;
     cursor: pointer;
+}
+
+.video-text {
+    padding: 1em;
+}
+
+.video-elem {
+    outline: none;
 }

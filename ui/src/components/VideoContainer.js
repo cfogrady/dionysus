@@ -102,7 +102,7 @@ class VideoContainer extends PureComponent {
                 <div className='video-container'>
                     <SimpleModal show={videoSrc != null}>
                         <div className="video-element-container">
-                            <video width="720" autoplay="autoplay" controls key={videoSrc}>
+                            <video width="720" className='video-elem' autoplay="autoplay" controls key={videoSrc}>
                                 <source src={videoSrc} type="video/mp4"/>
                             </video>
                             <button onClick={this.unloadVideo}>Back</button>
@@ -111,7 +111,7 @@ class VideoContainer extends PureComponent {
                     <LoadingModal show={loading}/>
                     {videos.map(video => 
                         (<div key={video.id} onClick={this.playElement(video)} className='video'>
-                            <p>{video.name}</p>
+                            <p className='video-text'>{video.name}</p>
                         </div>)
                     )}
                 </div>
