@@ -1,6 +1,7 @@
 package org.dionysus.streamer.user.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,8 +15,15 @@ public class UserCredentials {
 
     @NotNull
     private String username;
-    @JsonIgnore
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
+
+    public UserCredentials(@JsonProperty("username") String username,
+                           @JsonProperty(value = "password", access = JsonProperty.Access.WRITE_ONLY) String password) {
+        this.username = username;
+        this.password = password;
+
+    }
 
     public String getUsername() {
         return username;
@@ -25,12 +33,10 @@ public class UserCredentials {
         this.username = username;
     }
 
-    @JsonIgnore
     public String getPassword() {
         return password;
     }
 
-    @JsonSetter
     public void setPassword(String password) {
         this.password = password;
     }

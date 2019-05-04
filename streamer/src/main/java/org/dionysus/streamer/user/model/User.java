@@ -1,6 +1,8 @@
 package org.dionysus.streamer.user.model;
 
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.dionysus.streamer.user.UserRepository;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.TypeAlias;
@@ -18,7 +20,9 @@ public class User {
     @NotNull
     private UserCredentials credentials;
 
-    public User(String id, @Nonnull UserCredentials credentials) {
+    @JsonCreator
+    public User(@JsonProperty("id") String id,
+                @Nonnull @JsonProperty("credentials") UserCredentials credentials) {
         this.id = id;
         this.credentials = credentials;
     }

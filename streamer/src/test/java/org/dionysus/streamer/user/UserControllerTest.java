@@ -38,13 +38,13 @@ public class UserControllerTest {
     public void testSetup() {
         MockitoAnnotations.initMocks(this);
         securityConfig = new SecurityConfig();
-        controller = new UserController(userRepository, jwtBuilder, securityConfig);
+        controller = new UserController(userRepository, jwtBuilder, securityConfig, null);
     }
 
     @Test
     public void testThatGetUserReturnsUserFromRepo() {
         String testId = "testId";
-        User user = new User(testId, new UserCredentials());
+        User user = new User(testId, new UserCredentials("user", "password"));
         user.getCredentials().setUsername("testUser");
         Mockito.when(userRepository.findById(testId)).thenReturn(Mono.just(user));
         User resultUser = controller.getUser(testId).block();
